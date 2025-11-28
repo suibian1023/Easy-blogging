@@ -74,12 +74,20 @@ def summarize_body(body: str, length: int = 140) -> str:
     return condensed[: length - 1].rstrip() + "…"
 
 
+def fetch_issues(
+    token: str, repository: str, allowed_author: str, label: str | None = None
+) -> List[MutableMapping[str, str]]:
 def fetch_issues(token: str, repository: str, label: str, allowed_author: str) -> List[MutableMapping[str, str]]:
     url = f"https://api.github.com/repos/{repository}/issues"
     headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
     params = {
         "state": "open",
         "per_page": 100,
+        "sort": "created",
+        "direction": "desc",
+    }
+    if label:
+        params["labels"] = label
         "labels": label,
         "sort": "created",
         "direction": "desc",
@@ -247,6 +255,11 @@ def generate() -> None:
     if not token or not repository:
         raise EnvironmentError("GITHUB_TOKEN and GITHUB_REPOSITORY are required")
 
+    label = os.environ.get("BLOG_LABEL") or None
+    repo_owner = repository.split("/", maxsplit=1)[0]
+    allowed_author = os.environ.get("BLOG_OWNER", repo_owner)
+
+    issues = fetch_issues(token, repository, allowed_author=allowed_author, label=label)
     label = os.environ.get("BLOG_LABEL", "blog-post")
     repo_owner = repository.split("/", maxsplit=1)[0]
     allowed_author = os.environ.get("BLOG_OWNER", repo_owner)

@@ -24,6 +24,9 @@
 
 1. **设置仓库变量（可选但推荐）**
    - `BLOG_OWNER`：允许创建文章 Issue 的 GitHub 用户名（默认仓库所有者）。
+   - `BLOG_LABEL`：标记文章的标签（默认 `blog-post`，留空则抓取所有 Issue）。
+2. **自定义作者信息**：编辑 `config/author.json`，填入头像链接、昵称、签名等，主页会自动读取。
+3. **发布文章**：创建 Issue，标题即文章标题，正文写内容（支持基础 Markdown、代码块、列表、链接等）；若设置了 `BLOG_LABEL`，为 Issue 打上该标签即可被收录。
    - `BLOG_LABEL`：标记文章的标签（默认 `blog-post`）。
 2. **自定义作者信息**：编辑 `config/author.json`，填入头像链接、昵称、签名等，主页会自动读取。
 3. **发布文章**：创建带有 `BLOG_LABEL` 的 Issue，标题即文章标题，正文写内容（支持基础 Markdown、代码块、列表、链接等）。
@@ -33,6 +36,7 @@
 
 - 触发：Issue `opened/edited/reopened/labeled/unlabeled` 事件或手动 `workflow_dispatch`。
 - 守卫：`guard_issue` 任务会关闭非 `BLOG_OWNER` 创建的文章 Issue 并给出提示。
+- 生成：`generate_site` 任务运行 `scripts/generate_blog.py`，拉取符合标签与作者要求的 Issue（未设置标签则抓取全部），生成页面并自动提交。
 - 生成：`generate_site` 任务运行 `scripts/generate_blog.py`，拉取符合标签与作者要求的 Issue，生成页面并自动提交。
 - 权限：工作流已声明 `contents: write`、`issues: write`，用于提交文件与更新 Issue。
 
