@@ -35,6 +35,8 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add style.css index.html list.html _posts || true
             git add -A
+          if git status --porcelain | grep style.css; then
+            git add style.css
             git commit -m "chore: apply page style"
             git push
           else
